@@ -129,7 +129,7 @@ plugins:
     options: {}
     order: 45
   - source: "@quartz-community/encrypted-pages"
-    enabled: true
+    enabled: false   # 공개 repo 에 평문이 남으므로 의미 없음. sync 가 password 키 페이지를 차단한다
     options:
       iterations: 600000
       passwordField: password

@@ -1,11 +1,11 @@
 ---
 title: GitHub 블로그 배포 — Astro + GitHub Pages 완전 정리
-description: Astro 정적 사이트를 GitHub Pages로 배포하는 전체 과정. 세팅부터 URL 구조, 트러블슈팅, 배포 자동화까지 실전에서 겪은 그대로 정리.
+description: Astro 정적 사이트를 GitHub Pages로 배포하는 전체 과정. 세팅부터 URL 구조, 트러블슈팅, 배포
+  자동화까지 실전에서 겪은 그대로 정리.
 date: 2026-08-02
 modified: 2026-08-02
 tags: [github-pages, astro, github-actions, deploy, ci-cd]
 publish: true
-type: concept
 ---
 # GitHub 블로그 배포 — Astro + GitHub Pages 완전 정리
 
@@ -122,7 +122,7 @@ sync 스크립트 동작 (`scripts/sync-from-vault.mjs`):
 1. `SOURCE_DIRS` 스캔 (기본: `tech/wiki`, `projects/suda-chat/wiki`, `projects/simulation/wiki`)
 2. frontmatter `published: true` 인 것만 필터
 3. `src/content/blog/synced/{slug}.md` 로 복사
-4. Obsidian wikilink `페이지` → `/blog/{slug}` 링크로 변환
+4. Obsidian wikilink `[[페이지]]` → `/blog/{slug}` 링크로 변환
    - 대상 페이지도 published 이면 실제 링크, 아니면 텍스트로 fallback (사적 페이지 링크 유출 방지)
 5. 로컬 이미지 → `public/assets/synced/` 복사 + URL 재작성
 6. 이전에 sync 됐지만 지금은 unpublished 된 파일은 자동 삭제

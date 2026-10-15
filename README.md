@@ -4,7 +4,7 @@ Obsidian vault `G:\내 드라이브\llm-wiki` 의 두 가지 출력을 **Quartz 
 
 | 빌드 | 입력 | 명령 | 결과 |
 |---|---|---|---|
-| **내부** | vault 전체 (`.obsidian` `.claude` `_specs` `_templates` 제외) | `npm run internal` | `http://localhost:8080` — 나만 봄. 커밋·push 하지 않는다 |
+| **내부** | vault 전체 (`.obsidian` `.claude` `_specs` `_templates` 제외) | `npm run internal` | `http://127.0.0.1:8080` — **이 PC 에서만** (loopback 바인딩. Quartz 의 `--serve` 는 모든 인터페이스에 열리므로 쓰지 않는다). 커밋·push 하지 않는다 |
 | **공개** | `content/` ← `scripts/sync-public.mjs` 가 vault 에서 `published: true` + `pubDate` 페이지만 걸러 넣음 | `npm run publish` | push → GitHub Actions → `https://vibecraftlab.github.io/` |
 
 설계·규칙은 vault 의 `CLAUDE.md` §7·§11 과 `_specs/2026-09-30-llm-wiki-design.md` §5.6. 이 README 는 명령 치트시트다.
@@ -35,6 +35,16 @@ npm run typecheck                # Quartz 자체 tsc/prettier (업스트림 chec
 - 첨부는 `{domain}/assets/public/` 아래만 복사. 그 외 `![[…]]` 는 `[첨부 생략]`.
 - 공개 frontmatter: `title` `description`(=description ?? summary) `date`(=pubDate) `modified`(=updated) `tags`(=blogTags ?? tags 마지막 세그먼트) `publish: true`. 나머지 키는 제거.
 - `content/` 는 sync 가 소유 — 손으로 넣은 파일은 다음 sync 에서 삭제된다.
+- 비밀 검사는 **파일 전체**(frontmatter·`%% %%`·`<!-- -->` 주석 포함)에 한다. 주석은 검사 후 출력에서 제거. `password` 키가 있는 페이지는 거부.
+- 코드 스팬·펜스 안의 `[[링크]]` 는 건드리지 않는다. 미공개 markdown 링크(`.md` 유무·`#앵커` 포함)와 markdown 이미지도 강등/생략.
+- 로컬 절대경로 등 WARN 패턴은 차단하지 않고 `⚠` 로 보고한다 — 공개 전에 사람이 본다.
+
+## 공개는 되돌릴 수 없다
+
+공개 저장소의 **git 이력에 영원히 남는다.** `published` 를 지우고 다시 publish 하면 사이트에서는 사라지지만 과거 커밋에는 그대로 있다.
+
+- 발행 전: `npm run check` 결과의 `✓` 목록과 `⚠` 를 반드시 읽는다. 의심스러우면 발행하지 않는다.
+- 사고(비밀·사적 내용이 나감): ① vault 에서 고치고 `npm run publish` 로 사이트에서 제거 → ② 이력 제거는 `git filter-repo` 또는 orphan 브랜치로 `main` 을 다시 만들고 `git push --force` → ③ 유출된 비밀은 **무조건 폐기·재발급** (이력을 지워도 이미 복제됐다고 가정) → ④ 루트 `log.md` 에 기록.
 
 ## 새 PC 체크리스트
 
