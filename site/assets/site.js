@@ -111,9 +111,15 @@ if (/[?&]motion\b/.test(location.search)) document.documentElement.classList.add
 
   /* ── 글 화면: 목차 ── */
   const tl = $$('#toc a[href^="#"]');
-  if (tl.length) {
-    const heads = tl.map((a) => document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
-    const onScroll = () => { let on = 0; heads.forEach((h, i) => { if (h && h.getBoundingClientRect().top < 160) on = i; }); tl.forEach((a, i) => a.classList.toggle('on', i === on)); };
+  const cl = $$('.art-cover a.pr[href^="#"]'); // 표지의 "이 글의 순서" 줄
+  const headOf = (a) => document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+  const current = (heads) => { let on = 0; heads.forEach((h, i) => { if (h && h.getBoundingClientRect().top < 160) on = i; }); return on; };
+  if (tl.length || cl.length) {
+    const heads = tl.map(headOf), cheads = cl.map(headOf);
+    const onScroll = () => {
+      const on = current(heads); tl.forEach((a, i) => a.classList.toggle('on', i === on));
+      const c = current(cheads); cl.forEach((a, i) => { a.classList.toggle('sel', i === c); a.querySelector('.dot').classList.toggle('g', i === c); });
+    };
     addEventListener('scroll', onScroll, { passive: true }); onScroll();
   }
   const copy = $('#copy');

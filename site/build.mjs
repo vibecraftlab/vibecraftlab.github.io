@@ -211,7 +211,8 @@ const contactAndFooter = () => `<section class="contact" id="contact" aria-label
 const foot = (extra = '') => `${extra}<script src="/assets/site.js" defer></script>\n</body>\n</html>\n`;
 
 // 대표 이미지: 그 글의 첫 코드 블록(터미널 조각) + 목차(패널 조각) — 모두 글에서 온 실제 내용
-function coverFragments(p, { termClass = 'term nudge-r', panelClass = 'panel nudge-l', maxLines = 11 } = {}) {
+// link: 목차 줄을 누르면 갈 주소의 앞부분. 글 화면은 '' (같은 쪽 #절), 홈은 '/slug'
+function coverFragments(p, { termClass = 'term nudge-r', panelClass = 'panel nudge-l', maxLines = 11, link = `/${p.slug}` } = {}) {
   const parts = [];
   if (p.firstCode) {
     const lines = p.firstCode.value.replace(/\s+$/, '').split('\n');
@@ -222,7 +223,7 @@ function coverFragments(p, { termClass = 'term nudge-r', panelClass = 'panel nud
   }
   const outline = p.toc.filter((t) => t.depth === 2).slice(0, 6);
   if (outline.length) {
-    parts.push(`<div class="${panelClass}"><div class="ph"><span class="lb">이 글의 순서</span><small>${p.minutes}분</small></div>${outline.map((t, i) => `<div class="pr${i === 0 ? ' sel' : ''}"><span class="dot${i === 0 ? ' g' : ''}"></span><span class="lb">${esc(t.text)}</span></div>`).join('')}</div>`);
+    parts.push(`<div class="${panelClass}"><div class="ph"><span class="lb">이 글의 순서</span><small>${p.minutes}분</small></div>${outline.map((t, i) => `<a class="pr${i === 0 ? ' sel' : ''}" href="${link}#${esc(t.id)}"><span class="dot${i === 0 ? ' g' : ''}"></span><span class="lb">${esc(t.text)}</span><span class="go" aria-hidden="true"></span></a>`).join('')}</div>`);
   }
   if (!parts.length) parts.push(`<div class="${panelClass}"><div class="ph"><span class="lb">${esc(p.main)}</span><small>${p.minutes}분</small></div><div class="pr sub">${esc(p.description || p.sub)}</div></div>`);
   return parts.join('\n');
@@ -317,7 +318,7 @@ function postPage(p, i, posts, graph) {
     ${p.sub || p.description ? `<p class="sub" data-rise style="--i:1">${esc(p.sub || p.description)}</p>` : ''}
     <div class="byline" data-rise style="--i:2"><span class="who"><svg><use href="#logo"/></svg>vibecraft 팀</span><span>${korDate(p.date)}</span>${p.modified && p.modified !== p.date ? `<span>${korDate(p.modified)} 고침</span>` : ''}<span>${p.minutes}분 분량</span>${tag ? `<a href="/tags/${enc(tag)}">${esc(tag)}</a>` : ''}</div>
   </header>
-  <div class="art-cover" data-rise style="--i:3" data-ui>${coverFragments(p, { termClass: 'term', panelClass: 'panel', maxLines: 9 })}</div>
+  <div class="art-cover" data-rise style="--i:3" data-ui>${coverFragments(p, { termClass: 'term', panelClass: 'panel', maxLines: 9, link: '' })}</div>
   <div class="art-body">
     <article class="prose">${p.html}${p.tags.length ? `<p class="tagline">${p.tags.map((t) => `<a href="/tags/${enc(t)}">#${esc(t)}</a>`).join(' ')}</p>` : ''}${near}</article>
     ${tocHtml}
