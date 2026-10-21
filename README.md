@@ -8,7 +8,9 @@ Obsidian vault `G:\내 드라이브\llm-wiki` 의 두 가지 출력을 만든다
 | **공개** | `content/` ← `scripts/sync-public.mjs` 가 vault 에서 `published: true` + `pubDate` 페이지만 걸러 넣음 (+ 익명 위키 지도 `content/graph.json`) | `npm run publish` | push → GitHub Actions 가 `node site/build.mjs --out public` → `https://vibecraftlab.github.io/` |
 | **공개 미리보기** | 위와 같은 `content/` | `npm run site:serve` | `http://127.0.0.1:8090` — 이 PC 에서만. 결과는 `dist/` (git 제외) |
 
-공개 블로그 구조: `site/build.mjs`(마크다운 → HTML, shiki 코드 하이라이트, 홈·글·주제·404·RSS·sitemap) · `site/assets/site.css` `site.js`(디자인·상호작용) · `site/brand.mjs`(공식 로고 심볼, `design/logo/` 기준) · `site/static/`(파비콘·앱 아이콘·소개 사진). 디자인 원본은 `design/mockups/e-techblog.src.html`.
+공개 블로그 구조: `site/build.mjs`(마크다운 → HTML, shiki 코드 하이라이트, 홈·글·주제·404·RSS·sitemap) · `site/assets/site.css` `site.js`(디자인·상호작용) · `site/brand.mjs`(공식 로고 심볼) · `site/static/`(파비콘·앱 아이콘·소개 사진). 디자인의 정본은 `site/` 다. 로고 원본 키트는 Obsidian vault 의 `vibecraft/assets/brand/logo/` 에 있고, 여기 아이콘은 그 사본이다.
+
+repo 에 올리지 않는 것 (`.gitignore`): `dist/`(블로그 로컬 빌드) · `public/`(내부 위키 빌드, vault 전체가 들어 있다) · `design/`(이 PC 의 디자인 참고본).
 
 설계·규칙은 vault 의 `CLAUDE.md` §7·§11 과 `_specs/2026-09-30-llm-wiki-design.md` §5.6. 이 README 는 명령 치트시트다. 각 명령의 내부 로직과 더블클릭용 실행 파일(`bat\check.bat` `bat\publish.bat` `bat\internal-serve.bat` `bat\verify.bat` …)은 `RUNBOOK.md`.
 
@@ -58,7 +60,7 @@ npm run typecheck                # Quartz 자체 tsc/prettier (업스트림 chec
 2. `git clone https://github.com/vibecraftlab/vibecraftlab.github.io.git 0005.llm-wiki-site && cd 0005.llm-wiki-site` (이 PC 에서는 `C:\Users\dhhan1\Desktop\project\` 아래 — 2026-10-17 에 `01.claude\llm-wiki-site` 에서 이동)
 3. `npm i` → `npx quartz plugin install --from-config`
 4. vault 위치가 다르면 `$env:VAULT_PATH = "D:\path\llm-wiki"` (PowerShell) 후 명령 실행
-5. 업스트림 갱신: `git remote add upstream https://github.com/jackyzha0/quartz.git` → `git fetch upstream v5` → 필요할 때 merge
+5. 업스트림 갱신: `git remote add upstream https://github.com/jackyzha0/quartz.git` → `git fetch upstream v5` → 필요할 때 merge. 업스트림의 `docs/` 는 2026-10-21 에 지웠다(쓰지 않음). merge 때 `docs/` 충돌이 나면 다시 지우면 된다
 
 ## 설정 메모 (`quartz.config.yaml`)
 

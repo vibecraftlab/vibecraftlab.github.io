@@ -1,5 +1,4 @@
 .DS_Store
-.gitignore
 node_modules
 public
 prof
@@ -13,8 +12,10 @@ replit.nix
 quartz/cli/tui/dist/
 .turbo/
 
-# llm-wiki-site
-.quartz/plugins/
-
-# public blog generator (site/build.mjs) local output
+# llm-wiki-site — 이 PC 에서만 쓰는 것 (공개 repo 에 올리지 않는다)
+# 공개 블로그 로컬 빌드 결과 (site/build.mjs). CI 는 public/ 에 따로 만든다
 dist/
+# 디자인 참고본 (시안 E). 실제 디자인은 site/ 가 정본, 로고 원본은 Obsidian vault vibecraft/assets/brand/logo/
+design/
+# 디자인 스킬 작업 파일
+.taste-skill/

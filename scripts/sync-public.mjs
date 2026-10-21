@@ -152,17 +152,7 @@ export async function sync({ vault, outDir, check = false, patternsPath, graph =
     result.published.push({ slug: p.slug, src: p.rel, title: fmOut.title, date: fmOut.date, domain: p.domain, description: fmOut.description });
   }
 
-  // 4. index.md
-  const byDomain = {};
-  for (const p of result.published) (byDomain[p.domain] ||= []).push(p);
-  const idx = ['---', YAML.stringify({ title: 'vibecraft wiki', description: 'LLM 이 유지하는 개인 위키 중 공개한 페이지', publish: true }).trimEnd(), '---', '', '# vibecraft wiki', '',
-    'Obsidian + Claude Code 로 유지하는 LLM 위키에서 `published: true` 로 표시한 페이지만 여기에 나온다.', ''];
-  for (const d of Object.keys(byDomain).sort()) {
-    idx.push(`## ${d}`, '');
-    for (const p of byDomain[d].sort((a, b) => (a.date < b.date ? 1 : -1))) idx.push(`- [[${p.slug}|${p.title}]] — ${p.description} (${p.date})`);
-    idx.push('');
-  }
-  outputs.set('index.md', idx.join('\n'));
+  // 4. (Quartz 시절의 content/index.md 는 만들지 않는다 — 공개 블로그 첫 화면은 site/build.mjs 가 만든다. 남아 있던 파일은 아래 5 에서 지워진다)
 
   // 4b. 위키 지도 (공개 블로그 첫 화면) — 비공개 문서는 좌표·연결 수만, 공개 글만 slug
   if (graph) outputs.set('graph.json', JSON.stringify(buildGraph(vault, pubSlugs)));

@@ -118,14 +118,14 @@ test('(g) content/ 의 stale 파일은 삭제된다', async () => {
   assert.ok(fs.existsSync(path.join(f.out, 'pub-page.md')));
 });
 
-test('(h) content/index.md 가 생성되고 공개 페이지 제목을 담는다', async () => {
+test('(h) Quartz 시절의 content/index.md 는 만들지 않고, 남아 있으면 지운다', async () => {
   const f = fixture();
   page(f.vault, 'study/wiki/concepts/pub-page.md', PUB);
+  fs.mkdirSync(f.out, { recursive: true });
+  fs.writeFileSync(path.join(f.out, 'index.md'), '# 옛 첫 화면');
   await run(f);
-  const idx = read(f, 'index.md');
-  assert.match(idx, /\[\[pub-page(\|[^\]]*)?\]\]/);
-  assert.match(idx, /공개 글/);
-  assert.match(idx, /^publish: true$/m);
+  assert.ok(!fs.existsSync(path.join(f.out, 'index.md')));
+  assert.ok(fs.existsSync(path.join(f.out, 'pub-page.md')));
 });
 
 test('(i) --check 모드는 쓰지 않는다', async () => {

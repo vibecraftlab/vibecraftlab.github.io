@@ -40,7 +40,7 @@ Obsidian vault (G:\내 드라이브\llm-wiki)
 | `typecheck.bat` | Quartz tsc + prettier | 없음 | Quartz 코드·설정을 손댔을 때 |
 | `verify.bat` | check → test → internal-build 를 순서대로, 발행 없음 | `public/` | 툴체인 이동·새 PC·큰 변경 뒤 |
 
-`publish.bat "post: 제목"` 처럼 인자를 주면 커밋 메시지가 된다. `.bat` 들은 아직 git 에 추가하지 않았다(untracked) — 공개 repo 에 올릴지는 사람이 결정.
+`publish.bat "post: 제목"` 처럼 인자를 주면 커밋 메시지가 된다. `.bat` 들은 2026-10-21 부터 git 에 들어 있다 (비밀·개인 경로 없음, 새 PC 에서도 그대로 쓴다).
 
 `.bat` 본문은 **영문(ASCII)만** 쓴다. cmd 는 `chcp 65001` 뒤에 배치 파일을 바이트 오프셋으로 다시 읽어서, 파일 안에 한글이 있으면 줄이 깨져 엉뚱한 명령이 실행된다. `chcp 65001` 은 node 가 출력하는 한글을 제대로 보이게 하려고 둔 것이다. vault 기본 경로의 한글(`G:\내 드라이브\llm-wiki`)도 파일에 직접 쓰지 않고 `test.bat` `verify.bat` 가 node 의 `\u` 이스케이프로 풀어 받는다. `VAULT_PATH` 가 설정돼 있으면 그 값을 쓴다.
 
