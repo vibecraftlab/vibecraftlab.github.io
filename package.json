@@ -22,6 +22,8 @@
     "prebuild": "npm run install-plugins",
     "internal": "node scripts/internal.mjs",
     "sync": "node scripts/sync-public.mjs",
+    "site": "node site/build.mjs",
+    "site:serve": "node site/build.mjs --serve",
     "publish": "node scripts/publish.mjs",
     "typecheck": "tsc --noEmit && npx prettier . --check"
   },
@@ -132,7 +134,12 @@
     "@types/ws": "^8.18.1",
     "@types/yargs": "^17.0.35",
     "esbuild": "^0.28.2",
+    "mdast-util-to-string": "^4.0.0",
     "prettier": "^3.8.1",
+    "rehype-stringify": "^10.0.1",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.5.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

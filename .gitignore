@@ -15,3 +15,6 @@ quartz/cli/tui/dist/
 
 # llm-wiki-site
 .quartz/plugins/
+
+# public blog generator (site/build.mjs) local output
+dist/

@@ -233,3 +233,26 @@ test('(j) draft: true 는 조용히 제외', async () => {
   assert.equal(r.published.length, 0);
   assert.equal(r.blocked.length, 0);
 });
+
+test('(s) graph: true 면 graph.json — 비공개 문서는 좌표·연결 수만, 제목·경로·slug 없음', async () => {
+  const f = fixture();
+  page(f.vault, 'study/wiki/concepts/pub-page.md', PUB, '[[secret-plan]] 과 [[other-note]] 를 본다.');
+  page(f.vault, 'mpole/wiki/secret-plan.md', { title: '고객사 비밀 계획', type: 'concept' }, '[[pub-page]]');
+  page(f.vault, 'study/wiki/concepts/other-note.md', { title: '아직 안 쓴 글', type: 'concept' });
+  const r = await run(f, { graph: true });
+  assert.deepEqual(r.blocked, []);
+  const raw = read(f, 'graph.json');
+  const g = JSON.parse(raw);
+  assert.equal(g.total, 3);
+  assert.equal(g.links, 2);
+  assert.deepEqual(g.n.filter((x) => x.k).map((x) => x.k), ['pub-page']);
+  for (const leak of ['secret-plan', '고객사', 'mpole', 'other-note', '아직 안 쓴']) assert.ok(!raw.includes(leak), leak);
+  for (const nd of g.n) for (const key of Object.keys(nd)) assert.ok(['x', 'y', 'd', 'k'].includes(key), key);
+});
+
+test('(t) graph 옵션이 없으면 graph.json 을 쓰지 않는다', async () => {
+  const f = fixture();
+  page(f.vault, 'study/wiki/concepts/pub-page.md', PUB);
+  await run(f);
+  assert.ok(!fs.existsSync(path.join(f.out, 'graph.json')));
+});

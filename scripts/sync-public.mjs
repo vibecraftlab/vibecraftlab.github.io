@@ -13,6 +13,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
+import { buildGraph } from './graph-export.mjs';
 
 const ALLOWED = ['study/wiki', 'vibecraft/wiki', 'tooling/wiki', 'research/wiki'];
 const toPosix = (p) => p.split(path.sep).join('/');
@@ -58,7 +59,7 @@ const stripComments = (t) => t.replace(/%%[\s\S]*?%%/g, '').replace(/<!--[\s\S]*
 const isExternal = (t) => /^(?:[a-z]+:)?\/\//i.test(t) || /^(?:mailto|tel):/i.test(t);
 const slugOf = (target) => path.posix.basename(target.trim().replace(/\\/g, '/')).replace(/\.md$/i, '');
 
-export async function sync({ vault, outDir, check = false, patternsPath }) {
+export async function sync({ vault, outDir, check = false, patternsPath, graph = false }) {
   const require = createRequire(import.meta.url);
   const { BLOCK, WARN, firstHit } = require(patternsPath || path.join(vault, '.claude', 'hooks', 'patterns.js'));
   const result = { published: [], blocked: [], warnings: [], downgraded: [] };
@@ -163,6 +164,9 @@ export async function sync({ vault, outDir, check = false, patternsPath }) {
   }
   outputs.set('index.md', idx.join('\n'));
 
+  // 4b. 위키 지도 (공개 블로그 첫 화면) — 비공개 문서는 좌표·연결 수만, 공개 글만 slug
+  if (graph) outputs.set('graph.json', JSON.stringify(buildGraph(vault, pubSlugs)));
+
   // 5. 쓰기 (check 면 생략) — content/ 소유
   if (check) return result;
   fs.mkdirSync(outDir, { recursive: true });
@@ -178,7 +182,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const here = path.dirname(fileURLToPath(import.meta.url));
   const outDir = path.join(here, '..', 'content');
   const check = process.argv.includes('--check');
-  const r = await sync({ vault, outDir, check, patternsPath: process.env.PATTERNS_PATH });
+  const r = await sync({ vault, outDir, check, patternsPath: process.env.PATTERNS_PATH, graph: true });
   console.log(`${check ? '[check] ' : ''}published ${r.published.length} · blocked ${r.blocked.length} · downgraded links ${r.downgraded.length} · warnings ${r.warnings.length}`);
   for (const p of r.published) console.log(`  ✓ ${p.src} → content/${p.slug}.md`);
   for (const b of r.blocked) console.log(`  ✗ ${b.src}: ${b.reason}`);

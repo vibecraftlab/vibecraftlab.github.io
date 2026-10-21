@@ -1,18 +1,21 @@
-# llm-wiki-site — Quartz 툴체인 (내부 위키 + 공개 사이트)
+# llm-wiki-site — 내부 위키(Quartz) + 공개 기술 블로그(vibecraft tech)
 
-Obsidian vault `G:\내 드라이브\llm-wiki` 의 두 가지 출력을 **Quartz v5 하나**로 만든다.
+Obsidian vault `G:\내 드라이브\llm-wiki` 의 두 가지 출력을 만든다. 내부 위키는 **Quartz v5**, 공개 블로그는 자체 생성기 **`site/build.mjs`** (2026-10-21, 디자인 시안 E 를 그대로 옮김).
 
 | 빌드 | 입력 | 명령 | 결과 |
 |---|---|---|---|
 | **내부** | vault 전체 (`.obsidian` `.claude` `_specs` `_templates` 제외) | `npm run internal` | `http://127.0.0.1:8080` — **이 PC 에서만** (loopback 바인딩. Quartz 의 `--serve` 는 모든 인터페이스에 열리므로 쓰지 않는다). 커밋·push 하지 않는다 |
-| **공개** | `content/` ← `scripts/sync-public.mjs` 가 vault 에서 `published: true` + `pubDate` 페이지만 걸러 넣음 | `npm run publish` | push → GitHub Actions → `https://vibecraftlab.github.io/` |
+| **공개** | `content/` ← `scripts/sync-public.mjs` 가 vault 에서 `published: true` + `pubDate` 페이지만 걸러 넣음 (+ 익명 위키 지도 `content/graph.json`) | `npm run publish` | push → GitHub Actions 가 `node site/build.mjs --out public` → `https://vibecraftlab.github.io/` |
+| **공개 미리보기** | 위와 같은 `content/` | `npm run site:serve` | `http://127.0.0.1:8090` — 이 PC 에서만. 결과는 `dist/` (git 제외) |
 
-설계·규칙은 vault 의 `CLAUDE.md` §7·§11 과 `_specs/2026-09-30-llm-wiki-design.md` §5.6. 이 README 는 명령 치트시트다.
+공개 블로그 구조: `site/build.mjs`(마크다운 → HTML, shiki 코드 하이라이트, 홈·글·주제·404·RSS·sitemap) · `site/assets/site.css` `site.js`(디자인·상호작용) · `site/brand.mjs`(공식 로고 심볼, `design/logo/` 기준) · `site/static/`(파비콘·앱 아이콘·소개 사진). 디자인 원본은 `design/mockups/e-techblog.src.html`.
+
+설계·규칙은 vault 의 `CLAUDE.md` §7·§11 과 `_specs/2026-09-30-llm-wiki-design.md` §5.6. 이 README 는 명령 치트시트다. 각 명령의 내부 로직과 더블클릭용 실행 파일(`bat\check.bat` `bat\publish.bat` `bat\internal-serve.bat` `bat\verify.bat` …)은 `RUNBOOK.md`.
 
 ## 명령
 
 ```powershell
-cd C:\Users\dhhan1\01.claude\llm-wiki-site
+cd C:\Users\dhhan1\Desktop\project\0005.llm-wiki-site
 
 npm run internal                 # 내부 위키 서빙 (Ctrl+C 로 종료). vault 를 고치면 자동 반영
 npm run internal -- --once       # 빌드만 (public/ 에 결과)
@@ -22,7 +25,10 @@ npm run sync                     # vault → content/ (차단이 하나라도 �
 npm run publish                  # sync → commit → push (사람이 직접 실행할 때만)
 npm run publish -- "post: 제목"  # 커밋 메시지 지정
 
-node --test scripts/sync-public.test.mjs   # sync 테스트 12건
+npm run site                     # 공개 블로그 빌드만 (content/ → dist/)
+npm run site:serve               # 빌드 + 미리보기 http://127.0.0.1:8090 (bat\site-serve.bat)
+
+node --test scripts/sync-public.test.mjs   # sync 테스트 23건
 npm run typecheck                # Quartz 자체 tsc/prettier (업스트림 check)
 ```
 
@@ -49,7 +55,7 @@ npm run typecheck                # Quartz 자체 tsc/prettier (업스트림 chec
 ## 새 PC 체크리스트
 
 1. Node 24+, git, (Drive 동기화된) vault
-2. `git clone https://github.com/vibecraftlab/vibecraftlab.github.io.git llm-wiki-site && cd llm-wiki-site`
+2. `git clone https://github.com/vibecraftlab/vibecraftlab.github.io.git 0005.llm-wiki-site && cd 0005.llm-wiki-site` (이 PC 에서는 `C:\Users\dhhan1\Desktop\project\` 아래 — 2026-10-17 에 `01.claude\llm-wiki-site` 에서 이동)
 3. `npm i` → `npx quartz plugin install --from-config`
 4. vault 위치가 다르면 `$env:VAULT_PATH = "D:\path\llm-wiki"` (PowerShell) 후 명령 실행
 5. 업스트림 갱신: `git remote add upstream https://github.com/jackyzha0/quartz.git` → `git fetch upstream v5` → 필요할 때 merge

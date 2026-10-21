@@ -1,4 +1,4 @@
-name: Deploy Quartz site to GitHub Pages
+name: Deploy public blog to GitHub Pages
 
 on:
   push:
@@ -35,19 +35,11 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Cache Quartz plugins
-        uses: actions/cache@v5
-        with:
-          path: .quartz/plugins
-          key: ${{ runner.os }}-plugins-${{ hashFiles('quartz.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-plugins-
       - name: Install dependencies
         run: npm ci
-      - name: Install Quartz plugins
-        run: npx quartz plugin install
-      - name: Build Quartz
-        run: npx quartz build
+      # 공개 블로그는 Quartz 가 아니라 자체 생성기(site/build.mjs)로 만든다. 내부 위키만 Quartz.
+      - name: Build public blog
+        run: node site/build.mjs --content content --out public
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
